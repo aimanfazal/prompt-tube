@@ -39,8 +39,9 @@ prompttube/
 
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+py -3.12 -m venv venv
+source venv/Scripts/activate
+
 pip install -r requirements.txt
 
 cp .env.example .env
