@@ -47,28 +47,26 @@ def extract_video_id(youtube_url: str) -> str:
 
 
 def get_transcript(video_id: str) -> str:
-    """Fetch the transcript for a video and join it into one plain-text string.
-
-    Raises TranscriptUnavailableError if captions are disabled, missing, or
-    the video itself can't be found. Speech-to-text fallback is explicitly
-    out of scope for v0.1 (see spec).
-    """
     try:
-        transcript_segments = YouTubeTranscriptApi.get_transcript(video_id)
+        ytt_api = YouTubeTranscriptApi()
+        transcript_segments = ytt_api.fetch(video_id)
+
     except (NoTranscriptFound, TranscriptsDisabled) as exc:
         raise TranscriptUnavailableError(
             "This video doesn't have captions available, so a transcript "
             "can't be extracted. Try a different video."
         ) from exc
+
     except VideoUnavailable as exc:
         raise TranscriptUnavailableError(
             "That video couldn't be found. It may be private, deleted, or "
             "the URL may be incorrect."
         ) from exc
 
-    # Each segment is a dict like {"text": "...", "start": 0.0, "duration": 2.5}.
-    # We only need the words, joined into one block of text.
-    full_text = " ".join(segment["text"] for segment in transcript_segments)
+    full_text = " ".join(
+        segment.text
+        for segment in transcript_segments
+    )
 
     if not full_text.strip():
         raise TranscriptUnavailableError(
