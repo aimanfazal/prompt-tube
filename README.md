@@ -115,7 +115,7 @@ prompttube/
 cd backend
 
 py -3.12 -m venv venv
-venv\Scripts\activate
+source venv/Scripts/activate
 ```
 
 ### 2️⃣ Install Dependencies
